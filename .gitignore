@@ -1,0 +1,11 @@
+.DS_Store
+.vscode
+
+# secrets
+client_secrets.json
+credentials.json
+
+# other files
+_output
+results
+*.pptx

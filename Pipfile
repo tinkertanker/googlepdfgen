@@ -1,0 +1,17 @@
+[[source]]
+url = "https://pypi.org/simple"
+verify_ssl = true
+name = "pypi"
+
+[packages]
+google-api-python-client = "*"
+google-auth-oauthlib = "*"
+gspread = "*"
+python-pptx = "*"
+pydrive2 = "*"
+alive-progress = "*"
+
+[dev-packages]
+
+[requires]
+python_version = "3.9"
