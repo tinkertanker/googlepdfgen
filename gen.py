@@ -1,8 +1,8 @@
 import os
 import sys
+import time
 import shlex
 import shutil
-import signal
 import argparse
 import traceback
 import subprocess
@@ -53,6 +53,7 @@ def main() -> None:
                 "         --sheet https://docs.google.com/spreadsheets/d/xxxxx/edit#gid=12345 \\\n"
                 "         --template https://docs.google.com/presentation/d/xxxxx/edit \\\n"
                 "         --output https://drive.google.com/u/0/folders/xxxxx \\\n"
+                "         [--ppi 300]\\\n"
                 "         [--soffice /Applications/LibreOffice.app/Contents/MacOS/soffice] \\\n"
                 "         [--gs /opt/homebrew/bin/gs]",
             formatter_class=argparse.RawDescriptionHelpFormatter,
@@ -79,6 +80,11 @@ def main() -> None:
             required=True,
         )
         parser.add_argument(
+            "--ppi",
+            help='number of pixels per inch images should be downscaled to',
+            default=300,
+        )
+        parser.add_argument(
             "--libreoffice",
             help="path to LibreOffice binary; defaults to $(which soffice) on "
                  "macOS/Windows and $(which libreoffice) on Linux",
@@ -94,6 +100,7 @@ def main() -> None:
         DATA_SHEET = args.sheet
         TEMPLATE_SLIDES = args.template
         OUTPUT_FOLDER = args.output
+        IMAGE_PPI = args.ppi
         LIBREOFFICE_BIN = args.libreoffice
         GHOSTSCRIPT_BIN = args.gs
 
@@ -181,7 +188,7 @@ def main() -> None:
                     "-sPDFSettings='/printer' "
                     "-sColorConversionStrategy=UseDeviceIndependentColor "
                     "-sProcessColorModel=DeviceCMYK -dEmbedAllFonts=true "
-                    "-dFastWebView=true -r300 "
+                    f"-dFastWebView=true -r{IMAGE_PPI} "
                     # Set input and output
                     f'-q -o "results/{record["filename"]}.pdf" '
                     f'"_output/{record["filename"]}.pdf"'
@@ -191,18 +198,11 @@ def main() -> None:
                         shlex.split(command), stderr=subprocess.STDOUT
                     )
                 except subprocess.CalledProcessError as e:
-                    # Sometimes segfaults and sigbuses happen, so we'll just try again
-                    if -e.returncode in [
-                        signal.Signals.SIGSEGV.value,
-                        signal.Signals.SIGBUS.value,
-                    ]:
-                        print(
-                            f"Retrying `{command}` due to error code {e.returncode}",
-                        )
-                        clean_pdf()
-                    else:
-                        print(e.output.decode("utf-8"))
-                        raise
+                    # Sometimes weird things happen, so we'll just try again
+                    print(
+                        f"Retrying `{command}` due to error code {e.returncode}",
+                    )
+                    clean_pdf()
 
             clean_pdf()
 
@@ -229,6 +229,7 @@ def main() -> None:
                 except KeyboardInterrupt:
                     raise
                 except:
+                    time.sleep(1)
                     # All sorts of network errors may occur, so we'll just try again
                     print(
                         f"Retrying upload of results/{record['filename']}.pdf "
@@ -264,6 +265,7 @@ def main() -> None:
                 except KeyboardInterrupt:
                     raise
                 except:
+                    time.sleep(1)
                     # All sorts of network errors may occur, so we'll just try again
                     print(
                         f"Retrying update of {file_col_id}2 due to the "
