@@ -12,7 +12,7 @@ compliant.
 
 ## Google Cloud Setup
 
-Before using this script, you need to set up a Google Cloud project and enable the necessary APIs:
+Before using this script, you need to set up a Google Cloud project, enable the necessary APIs, and get a mysterious-sounding file called `client_secrets.json`. (TT staff, refer to the Notion, under "Cert Generator for Google Workspace", for a downloadable file.)
 
 1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
 2. Create a new project or select an existing one
@@ -115,3 +115,8 @@ surprisingly hard to do. The best option I had that ensures cross-platform
 compatibility would be to use the LibreOffice rendering engine, which would be
 most easy to use via the command line tool, and that only comes with the entire
 LibreOffice installation.
+
+## Credits
+
+- Ivan Tung, intern, Jan 2022
+- Cursor AI
