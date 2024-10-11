@@ -1,11 +1,44 @@
-.DS_Store
-.vscode
+# Python-related
+__pycache__/
+*.py[cod]
+*.so
+.Python
+env/
+venv/
+ENV/
+*.egg-info/
+dist/
+build/
+*.egg
 
-# secrets
+# Pipenv
+Pipfile.lock
+
+# Google API credentials
 client_secrets.json
 credentials.json
 
-# other files
-_output
-results
-*.pptx
+# Output directories
+_output/
+results/
+
+# macOS
+.DS_Store
+
+# IDEs
+.vscode/
+.idea/
+
+# LibreOffice temporary files
+.~lock.*#
+
+# PowerPoint temporary files
+~$*.pptx
+
+# PDF files
+*.pdf
+
+# Temporary files
+*.tmp
+*.bak
+*.swp

@@ -50,26 +50,57 @@ This generates `a_file.pdf` where `<name>` would be replaced by `Ivan` and
 `<class>` by `100`. The "file" column would be filled in with the Google Drive
 link. The script will ignore columns that do not match `^(filename|file|<.+>)$`.
 
+# Install dependencies
+
+## Install LibreOffice
+LibreOffice is necessary for rendering the template slides as PDFs.
+
+For macOS:
 ```bash
-# Install LibreOffice for rendering the template slides as PDFs (yes this is necessary)
-brew install libreoffice # macOS (get homebrew from https://brew.sh/)
-sudo apt install libreoffice # Linux (apt)
-sudo yum install libreoffice # Linux (yum)
+brew install libreoffice
+```
 
-# Install Ghostscript for cleaning up the PDFs (yes this is necessary)
-brew install ghostscript # macOS (get homebrew from https://brew.sh/)
-sudo apt install ghostscript # Linux (apt)
-sudo yum install ghostscript # Linux (yum)
+For Linux (apt-based distributions):
+```bash
+sudo apt install libreoffice
+```
 
-# Install Python dependencies
-python3 -m pip install -U pipenv  # if you don't already have it installed
-pipenv install
+For Linux (yum-based distributions):
+```bash
+sudo yum install libreoffice
+```
+
+## Install Ghostscript
+Ghostscript is necessary for cleaning up the PDFs.
+
+For macOS:
+```bash
+brew install ghostscript
+```
+
+For Linux (apt-based distributions):
+```bash
+sudo apt install ghostscript
+```
+
+For Linux (yum-based distributions):
+```bash
+sudo yum install ghostscript
+```
+
+## Install Python dependencies
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+pip install -r requirements.txt
+```
 
 # Run script
-pipenv run python gen.py --sheet X --template X --output X
+```bash
+python gen.py --sheet X --template X --output X
 
-# For more information about the arguments you can pass, check out the help text (please do this before asking for help)
-pipenv run python gen.py --help
+# For more information about the arguments you can pass, check out the help text
+python gen.py --help
 ```
 
 ## Why do I need to install LibreOffice for this to work?
