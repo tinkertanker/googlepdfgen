@@ -115,7 +115,12 @@ def main() -> None:
             1, title="Authenticating", bar=False, monitor=False, stats=False
         ) as bar:
             gauth = GoogleAuth(settings_file="auth.yaml")
-            gauth.LocalWebserverAuth()
+            try:
+                gauth.LocalWebserverAuth()
+            except Exception as e:
+                print(f"Error: {e}")
+                print("Please refer to the README for instructions on how to set up your Google Cloud project and obtain the necessary credentials.")
+                return
             drive = GoogleDrive(gauth)
             gc = gspread.oauth(
                 credentials_filename="client_secrets.json",
