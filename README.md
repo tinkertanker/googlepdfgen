@@ -10,6 +10,34 @@ It also linearises all PDFs generated for web viewing, downscales images, and
 optimises the document for printing. Additionally, all the PDFs are PDF/A-2b
 compliant.
 
+## Google Cloud Setup
+
+Before using this script, you need to set up a Google Cloud project and enable the necessary APIs:
+
+1. Go to the [Google Cloud Console](https://console.cloud.google.com/)
+2. Create a new project or select an existing one
+3. Enable the following APIs for your project:
+   - Google Drive API
+   - Google Sheets API
+   - Google Slides API
+
+To enable each API:
+1. Go to "APIs & Services" > "Library"
+2. Search for the API
+3. Click on the API name
+4. Click the "Enable" button
+
+After enabling the APIs, you need to create credentials:
+
+1. Go to "APIs & Services" > "Credentials"
+2. Click "Create Credentials" > "OAuth client ID"
+3. Select "Desktop app" as the application type
+4. Download the client configuration and save it as `client_secrets.json` in the root directory of this project
+
+Make sure the redirect URIs in your OAuth 2.0 Client ID include:
+- `http://localhost:8080`
+- `http://localhost:8080/` (with trailing slash)
+
 ## Usage
 
 The Google Sheet needs to be in the following format:
@@ -21,9 +49,6 @@ The Google Sheet needs to be in the following format:
 This generates `a_file.pdf` where `<name>` would be replaced by `Ivan` and
 `<class>` by `100`. The "file" column would be filled in with the Google Drive
 link. The script will ignore columns that do not match `^(filename|file|<.+>)$`.
-
-You also need a `client_secret.json` file in the root directory for this to
-work. To get one, refer to <https://stackoverflow.com/a/55416898>.
 
 ```bash
 # Install LibreOffice for rendering the template slides as PDFs (yes this is necessary)
