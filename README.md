@@ -40,6 +40,17 @@ Make sure the redirect URIs in your OAuth 2.0 Client ID include:
 
 ## Usage
 
+This script takes a slide template (in Google Slides or local PowerPoint), and a Google Sheets file, and generates downloadable PDFs for each.
+
+Example template: 
+![sample_template](https://github.com/user-attachments/assets/66ac8981-615c-452a-a7dd-436bcff1dbf5)
+
+Example sheet: 
+![sample_sheet](https://github.com/user-attachments/assets/6c11b85f-f54e-4f22-aeb9-ffd2db15021b)
+
+Example output: 
+![sample_generated](https://github.com/user-attachments/assets/474290b6-3ad1-452b-8ad6-f959d68ef840)
+
 The Google Sheet should be structured as follows:
 
 | filename | \<name> | \<class> | file                                   |
