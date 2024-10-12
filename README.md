@@ -40,15 +40,26 @@ Make sure the redirect URIs in your OAuth 2.0 Client ID include:
 
 ## Usage
 
-The Google Sheet needs to be in the following format:
+The Google Sheet should be structured as follows:
 
 | filename | \<name> | \<class> | file                                   |
 | :------- | :------ | :------: | :------------------------------------- |
 | a_file   | Ivan    |   100    | [this will be filled in by the script] |
 
-This generates `a_file.pdf` where `<name>` would be replaced by `Ivan` and
-`<class>` by `100`. The "file" column would be filled in with the Google Drive
-link. The script will ignore columns that do not match `^(filename|file|<.+>)$`.
+This sheet format uses a token system for dynamic content replacement:
+
+1. **Tokens**: Columns with headers enclosed in angle brackets (e.g., `<name>`, `<class>`) are considered tokens.
+2. **Template Placeholders**: Your Google Slides or PowerPoint template should contain placeholders that match these tokens exactly (e.g., `<name>`, `<class>`).
+3. **Replacement Process**: The script processes each row, replacing the tokens in the template with the corresponding values from the sheet.
+
+For example, using the row above:
+- It generates `a_file.pdf`
+- `<name>` in the template is replaced with "Ivan"
+- `<class>` is replaced with "100"
+
+The "file" column is reserved and will be populated by the script with the Google Drive link to the generated PDF.
+
+**Note**: The script only processes columns that match the pattern `^(filename|file|<.+>)$`. Any other columns will be ignored.
 
 ## Configuration
 
