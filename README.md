@@ -10,7 +10,9 @@ It also linearises all PDFs generated for web viewing, downscales images, and
 optimises the document for printing. Additionally, all the PDFs are PDF/A-2b
 compliant.
 
-## Google Cloud Setup
+## Setup
+
+### Google Cloud
 
 Before using this script, you need to set up a Google Cloud project, enable the necessary APIs, and get a mysterious-sounding file called `client_secrets.json`. (TT staff, refer to the Notion, under "Cert Generator for Google Workspace", for a downloadable file.)
 
@@ -38,9 +40,47 @@ Make sure the redirect URIs in your OAuth 2.0 Client ID include:
 - `http://localhost:8080`
 - `http://localhost:8080/` (with trailing slash)
 
+### Install LibreOffice
+
+We need LibreOffice to render the template slides as PDFs.
+
+For macOS:
+```bash
+brew install libreoffice
+```
+
+For Linux, use `apt` or `yum`:
+```bash
+sudo apt install libreoffice
+```
+
+### Install Ghostscript
+
+We need Ghostscript to clean up the PDFs.
+
+For macOS:
+```bash
+brew install ghostscript
+```
+
+For Linux, use `apt` or `yum`:
+```bash
+sudo apt install ghostscript
+```
+
+### Install Python dependencies
+
+```bash
+python3 -m venv venv
+source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
+pip install -r requirements.txt
+```
+
 ## Usage
 
 This script takes a slide template (in Google Slides or local PowerPoint), and a Google Sheets file, and generates downloadable PDFs for each.
+
+### Examples
 
 Example template: 
 ![sample_template](https://github.com/user-attachments/assets/66ac8981-615c-452a-a7dd-436bcff1dbf5)
@@ -50,6 +90,8 @@ Example sheet:
 
 Example output: 
 ![sample_generated](https://github.com/user-attachments/assets/474290b6-3ad1-452b-8ad6-f959d68ef840)
+
+### Setting up on Google Drive
 
 The Google Sheet should be structured as follows:
 
@@ -72,11 +114,9 @@ The "file" column is reserved and will be populated by the script with the Googl
 
 **Note**: The script only processes columns that match the pattern `^(filename|file|<.+>)$`. Any other columns will be ignored.
 
-## Configuration
+### Configuration with YAML file
 
-You can now use a YAML configuration file to specify the main parameters needed for the script. This allows for easier reuse and sharing of configurations.
-
-### Using a YAML Configuration File
+You can use a YAML configuration file to specify the main parameters needed for the script. This allows for easier reuse and sharing of configurations.
 
 1. Create a `config.yaml` file in the root directory of the project.
 2. Specify the following parameters in the YAML file:
@@ -97,9 +137,9 @@ The script will automatically use the values from the `config.yaml` file.
 
 Note: An example configuration file named `config.example.yaml` is provided in the repository. You can copy and adapt this file for your own use. The `config.yaml` file will not be uploaded to version control.
 
-### Command-line Arguments
+### Configuration with Command-line Arguments
 
-You can still use command-line arguments, which will override the values in the `config.yaml` file:
+Instead of a YAML file, you can use command-line arguments, which will override the values in the `config.yaml` file:
 
 ```bash
 python gen.py --sheet X --template Y --output Z --ppi 300 --libreoffice /path/to/libreoffice --gs /path/to/ghostscript
@@ -113,58 +153,10 @@ For more information about the arguments you can pass, check out the help text:
 python gen.py --help
 ```
 
-# Install dependencies
+### Share output folder
 
-## Install LibreOffice
-LibreOffice is necessary for rendering the template slides as PDFs.
+When the script finishes processing, you'll be prompted with whether to make the output Google Drive folder public. If you choose 'y', the script will update the folder permissions to allow anyone with the link to view its contents. Be careful when making folders public, especially if they contain sensitive information.
 
-For macOS:
-```bash
-brew install libreoffice
-```
-
-For Linux (apt-based distributions):
-```bash
-sudo apt install libreoffice
-```
-
-For Linux (yum-based distributions):
-```bash
-sudo yum install libreoffice
-```
-
-## Install Ghostscript
-Ghostscript is necessary for cleaning up the PDFs.
-
-For macOS:
-```bash
-brew install ghostscript
-```
-
-For Linux (apt-based distributions):
-```bash
-sudo apt install ghostscript
-```
-
-For Linux (yum-based distributions):
-```bash
-sudo yum install ghostscript
-```
-
-## Install Python dependencies
-```bash
-python3 -m venv venv
-source venv/bin/activate  # On Windows, use `venv\Scripts\activate`
-pip install -r requirements.txt
-```
-
-# Run script
-```bash
-python gen.py --sheet X --template X --output X
-
-# For more information about the arguments you can pass, check out the help text
-python gen.py --help
-```
 
 ## Why do I need to install LibreOffice for this to work?
 

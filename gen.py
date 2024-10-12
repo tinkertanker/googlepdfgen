@@ -304,6 +304,26 @@ def main() -> None:
             update_file_links()
 
             bar()
+
+        # Prompt user to make the folder public
+        make_public = input(f"\nDo you want to make the output folder public? (y/n): ").lower().strip() == 'y'
+        
+        if make_public:
+            with alive_bar(1, title="Making folder public", bar=False, monitor=False, stats=False) as bar:
+                try:
+                    folder = drive.CreateFile({'id': OUTPUT_FOLDER.split("/")[-1]})
+                    folder.InsertPermission({
+                        'type': 'anyone',
+                        'role': 'reader',
+                        'withLink': True
+                    })
+                    print(f"\nThe folder has been made public. Anyone with the link can view it.")
+                except Exception as e:
+                    print(f"\nError making folder public: {e}")
+                bar()
+
+        print(f"\nYou can access your output folder at: {OUTPUT_FOLDER}")
+
     except KeyboardInterrupt:
         pass
     finally:
