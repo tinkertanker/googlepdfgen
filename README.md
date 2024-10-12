@@ -50,6 +50,47 @@ This generates `a_file.pdf` where `<name>` would be replaced by `Ivan` and
 `<class>` by `100`. The "file" column would be filled in with the Google Drive
 link. The script will ignore columns that do not match `^(filename|file|<.+>)$`.
 
+## Configuration
+
+You can now use a YAML configuration file to specify the main parameters needed for the script. This allows for easier reuse and sharing of configurations.
+
+### Using a YAML Configuration File
+
+1. Create a `config.yaml` file in the root directory of the project.
+2. Specify the following parameters in the YAML file:
+
+```yaml
+sheet: "https://docs.google.com/spreadsheets/d/xxxxx/edit#gid=0"
+template: "https://docs.google.com/presentation/d/xxxxx/edit"
+output: "https://drive.google.com/drive/u/0/folders/xxxxx"
+```
+
+3. Run the script without specifying command-line arguments:
+
+```bash
+python gen.py
+```
+
+The script will automatically use the values from the `config.yaml` file.
+
+Note: An example configuration file named `config.example.yaml` is provided in the repository. You can copy and adapt this file for your own use. The `config.yaml` file will not be uploaded to version control.
+
+### Command-line Arguments
+
+You can still use command-line arguments, which will override the values in the `config.yaml` file:
+
+```bash
+python gen.py --sheet X --template Y --output Z --ppi 300 --libreoffice /path/to/libreoffice --gs /path/to/ghostscript
+```
+
+If you provide any of the main arguments (sheet, template, or output) via the command line, the script will use those instead of the values in the `config.yaml` file.
+
+For more information about the arguments you can pass, check out the help text:
+
+```bash
+python gen.py --help
+```
+
 # Install dependencies
 
 ## Install LibreOffice

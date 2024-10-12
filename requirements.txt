@@ -4,3 +4,4 @@ gspread
 python-pptx
 pydrive2
 alive-progress
+pyyaml

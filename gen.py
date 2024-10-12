@@ -8,6 +8,7 @@ import traceback
 import subprocess
 import pptx
 import gspread
+import yaml
 from pydrive2.auth import GoogleAuth
 from pydrive2.drive import GoogleDrive
 from alive_progress import alive_bar, alive_it
@@ -49,35 +50,41 @@ def main() -> None:
                 "Refer to https://github.com/tinkertanker/googlepdfgen for more "
                 "information.",
             usage=
-                "pipenv run python gen.py \\\n"
-                "         --sheet https://docs.google.com/spreadsheets/d/xxxxx/edit#gid=12345 \\\n"
-                "         --template https://docs.google.com/presentation/d/xxxxx/edit \\\n"
-                "         --output https://drive.google.com/u/0/folders/xxxxx \\\n"
-                "         [--ppi 300]\\\n"
-                "         [--soffice /Applications/LibreOffice.app/Contents/MacOS/soffice] \\\n"
-                "         [--gs /opt/homebrew/bin/gs]",
+                "python gen.py \\\n"
+                "    [--config config.yaml] \\\n"
+                "    [--sheet https://docs.google.com/spreadsheets/d/xxxxx/edit#gid=12345] \\\n"
+                "    [--template https://docs.google.com/presentation/d/xxxxx/edit] \\\n"
+                "    [--output https://drive.google.com/u/0/folders/xxxxx] \\\n"
+                "    [--ppi 300]\\\n"
+                "    [--soffice /Applications/LibreOffice.app/Contents/MacOS/soffice] \\\n"
+                "    [--gs /opt/homebrew/bin/gs]",
             formatter_class=argparse.RawDescriptionHelpFormatter,
         )
-        required_arguments = parser.add_argument_group('required arguments')
-        required_arguments.add_argument(
+        manual_arguments = parser.add_argument_group('manual arguments')
+        manual_arguments.add_argument(
+            "--config",
+            help="path to YAML configuration file",
+            default="config.yaml",
+        )
+        manual_arguments.add_argument(
             "--sheet",
             help='link to a spreadsheet on Google Sheets in the form of '
                  '"https://docs.google.com/spreadsheets/d/xxxxx/edit#gid=0" (note the '
                  'gid parameter)',
-            required=True,
+            required=False,
         )
-        required_arguments.add_argument(
+        manual_arguments.add_argument(
             "--template",
             help='link to a Google Slides template in the form of '
-                 '"https://docs.google.com/presentatino/d/xxxxx/edit" OR path to a '
+                 '"https://docs.google.com/presentation/d/xxxxx/edit" OR path to a '
                  'Powerpoint template file',
-            required=True,
+            required=False,
         )
-        required_arguments.add_argument(
+        manual_arguments.add_argument(
             "--output",
             help='link to the output folder on Google Drive in the form of '
                  '"https://drive.google.com/drive/u/0/folders/xxxxx"',
-            required=True,
+            required=False,
         )
         parser.add_argument(
             "--ppi",
@@ -97,12 +104,28 @@ def main() -> None:
             default="gswin32c" if sys.platform in ("win32",) else "gs",
         )
         args = parser.parse_args()
-        DATA_SHEET = args.sheet
-        TEMPLATE_SLIDES = args.template
-        OUTPUT_FOLDER = args.output
-        IMAGE_PPI = args.ppi
-        LIBREOFFICE_BIN = args.libreoffice
-        GHOSTSCRIPT_BIN = args.gs
+
+        # Load configuration from YAML file if it exists
+        config = {}
+        if os.path.exists(args.config):
+            with open(args.config, 'r') as config_file:
+                config = yaml.safe_load(config_file)
+
+        # Use command-line arguments to override YAML settings
+        DATA_SHEET = args.sheet or config.get('sheet')
+        TEMPLATE_SLIDES = args.template or config.get('template')
+        OUTPUT_FOLDER = args.output or config.get('output')
+        IMAGE_PPI = args.ppi or config.get('ppi', 300)
+        LIBREOFFICE_BIN = args.libreoffice or config.get('libreoffice', "soffice" if sys.platform in ("win32", "darwin") else "libreoffice")
+        GHOSTSCRIPT_BIN = args.gs or config.get('gs', "gswin32c" if sys.platform in ("win32",) else "gs")
+
+        # Check if using config.yaml
+        if args.sheet is None and args.template is None and args.output is None:
+            print("Using config.yaml")
+
+        # Validate required parameters
+        if not all([DATA_SHEET, TEMPLATE_SLIDES, OUTPUT_FOLDER]):
+            parser.error("Missing required parameters. Please provide them either in the YAML config file or as command-line arguments.")
 
         # Set up folders
         shutil.rmtree("results", ignore_errors=True)
